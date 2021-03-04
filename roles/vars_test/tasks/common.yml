@@ -1,0 +1,16 @@
+---
+- vars:
+    testvar3: tv3
+- tasks:
+  - shell: "echo tv4"
+    register: testvar4
+  - debug:
+      msg: "{{testvar3}} -- {{testvar4.stdout}}"
+ 
+- tasks:
+  - name: other play get testvar4
+    debug:
+      msg: "{{testvar4.stdout}}"
+  - name: other play get testvar3
+    debug:
+      msg: "{{testvar3}}"

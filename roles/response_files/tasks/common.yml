@@ -1,0 +1,10 @@
+---
+- name: " <r_response_files_t_common> template a file to $ORACLE_BASE/database/db_inst.rsp "
+  template:
+    src: "{{ db_inst_file_name }}"
+    dest: "{{ oracle_base }}/database/db_inst.rsp"
+    owner: oracle
+    group: oinstall
+    mode: "0775"
+    #validate:
+    #    #backup: yes

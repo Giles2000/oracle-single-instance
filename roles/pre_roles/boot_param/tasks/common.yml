@@ -1,0 +1,24 @@
+---
+- name: <pr_r_boot_param_t_common> copy a file to /etc/default/grub
+  copy:
+    src: default_grub.ini
+    dest: /etc/default/grub
+    #owner:
+    #group:
+    #mode:
+    #backup: yes
+    # The validation command to run before copying into place.
+    # E.g. `validate: /usr/sbin/visudo -csf %s`
+    #validate:
+
+- name: <pr_r_boot_param_t_common> rebuild /boot/grub2/grub.cfg
+  command:
+    cmd: grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name: <pr_r_boot_param_t_common> stop service tuned
+  systemd:
+    name: tuned
+    # Choices: reloaded, restarted, started, stopped
+    state: stopped
+    enabled: no
+    #daemon_reload: yes

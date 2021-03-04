@@ -1,0 +1,17 @@
+---
+
+- name: <r_kernel_param_t_common> template a file to /etc/sysctl.d/80-oracle.conf
+  template:
+    src: 80-oracle.conf.j2
+    dest: /etc/sysctl.d/80-oracle.conf
+    owner: root
+    group: root
+    mode: "0644"
+    #validate:
+    #backup: yes
+
+- name: <r_kernel_param_t_common> reload settings from all system configuration files
+  command:
+    cmd: sysctl --system --ignore
+
+  ignore_errors: yes

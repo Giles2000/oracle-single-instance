@@ -1,0 +1,40 @@
+---
+- name: <pr_r_swap_file_t_common> touch /swapfile file
+  file:
+    path: /swapfile
+    state: touch
+    owner: root
+    group: root
+    mode: "0600"
+    access_time: preserve
+    modification_time: preserve
+  when: " need_resize_swap  == True"
+
+- name: <pr_r_swap_file_t_common> set up a swap file
+  command:
+    cmd: "dd if=/dev/zero of=/swapfile bs=1M count={{ swap_size }}"
+    #remove:
+  when: " need_resize_swap  == True"
+
+- name: <pr_r_swap_file_t_common> create a swap filesystem
+  filesystem:
+    fstype: swap
+    dev: /swapfile
+    #opts:
+  when: " need_resize_swap  == True"
+
+- name: <pr_r_swap_file_t_common> add swap mount line to /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    state: present
+    insertafter: EOF
+    line: |-
+      /swapfile swap swap defaults 0 0
+    #validate:
+  when: " need_resize_swap  == True"
+
+- name: <pr_r_swap_file_t_common> mount up /swapfile
+  command:
+    cmd: swapon /swapfile
+
+  when: " need_resize_swap  == True"

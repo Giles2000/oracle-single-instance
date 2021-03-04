@@ -1,0 +1,13 @@
+---
+# defaults file for roles/oracle_env
+
+# FROM TASK: <r_oracle_env_t_common> template a file to /home/oracle/.bash_profile
+oracle_sid: orcl11g
+
+oracle_base: "{{ mount_map.pm1.point }}/app/oracle"
+
+oracle_inventory: "{{ oracle_base }}/../oraInventory"
+
+oracle_home: "{{ oracle_base }}/product/{{ oracle_version }}/dbhome_1"
+
+sql_home: "{{ oracle_home }}/sqldeveloper/sqlcl"

@@ -1,0 +1,23 @@
+---
+# defaults file for users
+primary_groups:
+   oinstall: # oraInventory group
+    gid: 54321
+
+secondary_groups:
+   dba: # OSDBA group
+    gid: 54322
+
+third_groups:
+  oper: # OSDBA group
+    gid: 54323
+
+users:
+   oracle: # oracle software owner user
+    comment: oracle software owner user
+    uid: 54321
+    primary_group: oinstall
+    secondary_groups: dba
+    third_groups: oper 
+    password: oracle
+    append: yes

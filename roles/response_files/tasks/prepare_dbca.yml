@@ -1,0 +1,10 @@
+---
+- name: "<r_response_files_t_prepare_dbca> template a file to $ORACLE_BASE/database/dbca.rsp"
+  template:
+    src: "{{ dbca_file_name }}"
+    dest: "{{ oracle_base }}/database/dbca.rsp"
+    owner: oracle
+    group: oinstall
+    mode: "0775"
+    #validate:
+    #backup: yes

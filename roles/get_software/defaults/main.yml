@@ -1,0 +1,10 @@
+---
+check_method: cksum
+software_package: |-
+  {%- if oracle_version == '12.2.0' -%}
+  linuxx64_12201_database.zip
+  {%- elif oracle_version == '11.2.0' -%}
+  p13390677_112040_Linux-x86-64_1_and_2of7.zip
+  {%- endif -%}
+
+unpacked_path: "{{ oracle_base }}"

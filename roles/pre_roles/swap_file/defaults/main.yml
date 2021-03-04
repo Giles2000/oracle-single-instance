@@ -1,0 +1,27 @@
+---
+# defaults file for swap_file
+
+swap_total_mb: "{{ ansible_facts['swaptotal_mb'] }}"
+mem_total_mb: "{{ ansible_facts['memtotal_mb'] }}"
+mem_total_mb_150: "{{ ((mem_total_mb | float)*1.5) | int }}"
+_1_GB_TO_MB: 1024
+_2_GB_TO_MB: 2048
+_16_GB_TO_MB: 16384
+swap_size: |-
+  {%- if (mem_total_mb | int) >= _1_GB_TO_MB and (mem_total_mb | int) <= _2_GB_TO_MB -%}
+  {{ ((mem_total_mb | float)*1.5-(swap_total_mb| int)) | int }}
+  {%- elif (mem_total_mb | int) > _2_GB_TO_MB and (mem_total_mb | int) <= _16_GB_TO_MB -%}
+  {{ ((mem_total_mb | float )-(swap_total_mb | float)) | int }}
+  {%- else -%}
+  {{ _16_GB_TO_MB-(swap_total_mb | float)) | int }}
+  {%- endif -%}
+need_resize_swap: |-
+  {%- if (mem_total_mb | int) >= _1_GB_TO_MB and (mem_total_mb | int) <= _2_GB_TO_MB and ((mem_total_mb | float)*1.5 > (swap_total_mb| int)) -%}
+  True
+  {%- elif (mem_total_mb | int) > _2_GB_TO_MB and (mem_total_mb | int) <= _16_GB_TO_MB and ((mem_total_mb | float ) > (swap_total_mb | float))-%}
+  True
+  {%- elif (swap_total_mb | int) <= _16_GB_TO_MB and (mem_total_mb | int) > _16_GB_TO_MB -%}
+  True
+  {%- else -%}
+  False
+  {%- endif -%}

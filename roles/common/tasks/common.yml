@@ -1,0 +1,110 @@
+---
+- name: <r_common_t_common> remove /etc/oraInst.loc file
+  file:
+    path: /etc/oraInst.loc
+    state: absent
+
+- name: <r_common_t_common> make sure defined oracle sid is not in /etc/oratab
+  lineinfile:
+    path: /etc/oratab
+    state: absent
+    regexp: "^{{ oracle_sid }}"
+
+- name: <r_common_t_common> start oracle universal installer in silent mode
+  shell:
+  become: yes
+  become_method: su
+  become_user: oracle
+  #become_flags: "-s /bin/sh"
+  args:
+    cmd: "{{ oracle_base }}/database/runInstaller -force -silent -showProgress -waitForCompletion -noconfig -responseFile {{ oracle_base }}/database/db_inst.rsp"
+
+  register: oui_result
+  ignore_errors: yes
+  failed_when:
+    - oui_result.rc != 0
+    - oui_result.rc != 254
+
+- name: <r_common_t_common> print output of runInstaller command execution
+  ignore_errors: yes
+  debug:
+    msg: "{{ runInstaller_stdout_search }},{{ oui_result.stdout }}"
+  vars:
+    runInstaller_stdout_search: "{{ oui_result.stdout | regex_search('(Successfully)') }}"
+  failed_when:
+    - runInstaller_stdout_search == ''
+
+- name: <r_common_t_common> run orainstRoot.sh
+  shell:
+  become: yes
+  become_method: su
+  become_user: root
+  #become_flags: "-s /bin/sh"
+  args:
+    cmd: "{{ oracle_inventory }}/orainstRoot.sh"
+
+  register: orainst_root_result
+  ignore_errors: yes
+
+- name: <r_common_t_common> print output of orainstRoot.sh script execution
+  debug:
+    msg: "{{ orainst_root_result.stdout_lines }}"
+  ignore_errors: yes
+  failed_when: orainst_root_result.rc != 0
+
+- name: <r_common_t_common> run root.sh script
+  shell:
+  become: yes
+  become_method: su
+  become_user: root
+  #become_flags: "-s /bin/sh"
+  args:
+    cmd: "{{ oracle_home }}/root.sh"
+
+  register: root_result
+  ignore_errors: yes
+
+- name: <r_common_t_common> print output of root.sh script execution
+  debug:
+    msg: "{{ root_result.stdout_lines }}"
+  ignore_errors: yes
+  failed_when: root_result.rc != 0
+
+- name: <r_common_t_common> run net configuration assistant in silent mode
+  shell:
+  become: yes
+  become_method: su
+  become_user: oracle
+  #become_flags: "-s /bin/sh"
+  args:
+    cmd: "{{ oracle_home }}/bin/netca -silent -responsefile {{ oracle_base }}/database/response/netca.rsp"
+
+  register: netca_result
+  ignore_errors: yes
+
+- name: <r_common_t_common> print output of netca command execution
+  debug:
+    msg: "{{ netca_result.stdout_lines }}"
+  ignore_errors: yes
+  failed_when: netca_result.rc != 0
+
+- name: <r_common_t_common> run database configuration assistant in silent mode
+  shell:
+  become: yes
+  become_method: su
+  become_user: oracle
+  #become_flags: "-s /bin/sh"
+  args:
+    cmd: "{{ oracle_home }}/bin/dbca -silent -createDatabase -responseFile {{ oracle_base }}/database/dbca.rsp"
+
+  register: dbca_result
+  ignore_errors: yes
+  failed_when: dbca_result.rc != 0
+  when:  create_default_instance == '1'
+
+- name: <r_common_t_common> print output of dbca command execution
+  debug:
+    msg: "{{ dbca_result.stdout_lines }}"
+  ignore_errors: yes
+  failed_when: dbca_result.rc != 0
+  when:   create_default_instance == '1'

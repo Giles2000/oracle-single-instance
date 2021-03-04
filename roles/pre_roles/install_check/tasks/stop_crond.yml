@@ -1,0 +1,6 @@
+---
+
+- name: <pr_r_install_t_stop_crond> ensure cron jobs don't run during installation
+  systemd:
+    name: crond
+    state: stopped

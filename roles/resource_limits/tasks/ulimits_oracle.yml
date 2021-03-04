@@ -1,0 +1,24 @@
+- name: <r_resource_limits_t_ulimits_oracle> enable limits config file
+  blockinfile:
+    path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK #"
+    block: |
+      if [ $USER = "oracle" ]; then
+         if [ $SHELL = "/bin/ksh" ]; then
+            ulimit -p 16384
+            ulimit -n 65536
+         else
+            ulimit -u 16384 -n 65536
+         fi
+      fi
+- name: <r_resource_limits_t_ulimits_oracle> ulimits config file
+  shell:
+  become: yes
+  become_method: su
+  become_user: oracle
+  args:
+    cmd: ulimit -a
+  register: limits_report
+- name: <r_resource_limits_t_ulimits_oracle> report all current limits
+  debug:
+    msg: "{{ limits_report.stdout_lines }}"

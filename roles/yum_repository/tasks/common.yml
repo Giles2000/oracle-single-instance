@@ -1,0 +1,6 @@
+---
+- name: <r_pkg_reqs_t_common> delete old yum.repo
+  shell: rm -rf /etc/yum.repo.d/*.repo
+  
+- name: <r_pkg_reqs_t_common> install required packages
+  shell: curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo

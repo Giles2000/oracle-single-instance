@@ -1,0 +1,12 @@
+[GENERAL]
+RESPONSEFILE_VERSION = "11.2.0"
+OPERATION_TYPE = "createDatabase"
+[CREATEDATABASE]
+GDBNAME = {{ oracle_sid }}
+SID = {{ oracle_sid }}
+TEMPLATENAME = "General_Purpose.dbc"
+SYSPASSWORD =  {{ oracle_pwd }}
+SYSTEMPASSWORD = {{ oracle_pwd }}
+CHARACTERSET = {{ oracle_characterset }}
+TOTALMEMORY=0
+memoryPercentage=40

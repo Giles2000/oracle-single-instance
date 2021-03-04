@@ -1,0 +1,43 @@
+---
+- name: <r_get_software_t_local_copy> compute the checksum of software package
+  command:
+    #become: yes
+    #become_user:
+    chdir: /tmp
+    cmd: "{{ check_method }} {{ software_package }}"
+    creates: "{{ unpacked_path }}/database"
+
+  register: checksum_result
+
+- name: <r_get_software_t_local_copy> check the checksum of software package for version=12
+  fail:
+    msg: " {{ checksum_search }},The package is corrupted, please copy {{ software_package }} to /tmp again!" # not required. The customized message used for failing execution. If omitted, fail will simply bail out with a generic message.
+  vars:
+    skipped_search: "{{checksum_result.stdout | regex_search('(skipped)')}}"
+    checksum_search: "{{checksum_result.stdout | regex_search('(4170261901 3453696911)')}}"
+  when:
+    - skipped_search == ''
+    - checksum_search == ''
+    - oracle_version == '12.2.0'
+
+
+- name: <r_get_software_t_local_copy> check the checksum of software package for version=11
+  fail:
+    msg: " {{ checksum_search }},The package is corrupted, please copy {{ software_package }} to /tmp again!" # not required. The customized message used for failing execution. If omitted, fail will simply bail out with a generic message.
+  vars:
+    skipped_search: "{{checksum_result.stdout | regex_search('(skipped)')}}"
+    checksum_search: "{{checksum_result.stdout | regex_search('(953671621 2546933905)')}}"
+  when:
+    - skipped_search == ''
+    - checksum_search == ''
+    - oracle_version == '11.2.0'
+
+- name: "<r_get_software_t_local_copy> extract software package into {{ unpacked_path }}/"
+  unarchive:
+    src: "/tmp/{{ software_package }}"
+    dest: "{{ unpacked_path }}/"
+    owner: oracle
+    group: oinstall
+    mode: "0755"
+    copy: no
+    creates: "{{ unpacked_path }}/database"

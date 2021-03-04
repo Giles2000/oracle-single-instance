@@ -1,0 +1,5 @@
+---
+# defaults file for resource_limits
+limits_conf_file: 70-user-oracle.conf
+mem_total_kb: "{{ (ansible_facts['memtotal_mb'])*1024 }}"
+memlock_limit: "{{ ((mem_total_kb | float)*0.9) | int }}"

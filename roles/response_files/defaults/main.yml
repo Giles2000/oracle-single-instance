@@ -1,0 +1,30 @@
+---
+# defaults file for response_files
+
+oracle_edition: EE
+
+enable_cdb: true
+
+oracle_pdb: PDB1
+
+oracle_pwd: oracle
+
+oracle_characterset: ZHS16GBK
+
+mem_total_mb: "{{ ansible_facts['memtotal_mb'] }}"
+
+_4_GB_TO_MB: 4096
+
+db_inst_file_name: |-
+  {%- if oracle_version == '11.2.0' -%}
+  db_inst_for_11g.rsp.j2
+  {%- elif oracle_version == '12.2.0' -%}
+  db_inst.rsp.j2
+  {%- endif -%}
+
+dbca_file_name: |-
+  {%- if oracle_version == '11.2.0' -%}
+  dbca_for_11g.rsp.j2
+  {%- elif oracle_version == '12.2.0' -%}
+  dbca.rsp.j2
+  {%- endif -%}

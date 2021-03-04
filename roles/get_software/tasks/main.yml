@@ -1,0 +1,7 @@
+---
+# tasks file for get_software
+
+- import_tasks: local_copy.yml
+  tags:
+    - r_get_software_t_local_copy
+
